@@ -984,29 +984,12 @@ class DA(nn.Module):
         # Placeholder for deformable attention computation
         output = value  # This should be replaced with actual deformable attention mechanism
 
-        output = output.view(B, H, W, C).permute(0, 3, 1, 2)
+        output = output.view(B, N, C).permute(0, 2, 1).view(B, C, H, W)
         return self.output_proj(output)
     
 
 class DSA(nn.Module):
-    """
-    Deformable Spatial Attention module.
-
-    Args:
-        c1 (int): Number of input channels.
-        c2 (int): Number of output channels.
-        e (float): Expansion factor for the intermediate channels. Default is 0.5.
-
-    Attributes:
-        c (int): Number of intermediate channels.
-        cv1 (Conv): 1x1 convolution layer to reduce the number of input channels to 2*c.
-        cv2 (Conv): 1x1 convolution layer to reduce the number of output channels to c.
-        attn (DA): Deformable attention module for spatial attention.
-        ffn (nn.Sequential): Feed-forward network module.
-    """
-
     def __init__(self, c1, c2, e=0.5):
-        """Initializes convolution layers, deformable attention module, and feed-forward network with channel reduction."""
         super().__init__()
         assert c1 == c2
         self.c = int(c1 * e)
@@ -1017,15 +1000,6 @@ class DSA(nn.Module):
         self.ffn = nn.Sequential(Conv(self.c, self.c * 2, 1), Conv(self.c * 2, self.c, 1, act=False))
 
     def forward(self, x):
-        """
-        Forward pass of the DSA module.
-
-        Args:
-            x (torch.Tensor): Input tensor.
-
-        Returns:
-            (torch.Tensor): Output tensor.
-        """
         a, b = self.cv1(x).split((self.c, self.c), dim=1)
         b = b + self.attn(b, spatial_shapes=[(x.shape[2], x.shape[3])])
         b = b + self.ffn(b)
