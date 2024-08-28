@@ -55,6 +55,8 @@ from .block import (
     SCDown,
     DA,
     DSA,
+    C2fKAN,
+    SPPFWithKAN,
 )
 from .conv import (
     CBAM,
@@ -70,6 +72,7 @@ from .conv import (
     LightConv,
     RepConv,
     SpatialAttention,
+    ConvWithKAN,
 )
 from .head import OBB, Classify, Detect, Pose, RTDETRDecoder, Segment, WorldDetect, v10Detect
 from .transformer import (
@@ -154,4 +157,8 @@ __all__ = (
     "SCDown",
     "DA",
     "DSA",
+    "ConvWithKAN",
+    "C2fKAN",
+    "SPPFWithKAN",
+    "BottleneckWithKAN",
 )
