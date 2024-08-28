@@ -50,6 +50,7 @@ __all__ = (
     "DSA",
     "C2fKAN",
     "SPPFWithKAN",
+    "BottleneckWithKAN",
 )
 
 
